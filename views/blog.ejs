@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/head') %>
+  <title><%= blog ? blog.title : 'Blog' %></title>
+</head>
+<body>
+  <%- include('./partials/nav') %>
+
+  <div class="container mt-3">
+    <% if (blog) { %>
+
+      <h1 class="display-4"><%= blog.title %></h1>
+
+      <!-- Author Info -->
+      <div class="d-flex align-items-center gap-3 my-4">
+        <% if (blog && blog.createdBy) { %>
+          <img src="<%= blog.createdBy.profileImageURL || '/images/default.png' %>" 
+               width="80" 
+               alt="author image" 
+               class="rounded-circle">
+          <div>
+            <h5 class="mb-0"><%= blog.createdBy.name || 'Anonymous' %></h5>
+            <p class="text-muted mb-0"><%= new Date(blog.createdAt).toLocaleDateString() %></p>
+          </div>
+        <% } else { %>
+          <img src="/images/default.png" width="80" alt="default author image" class="rounded-circle">
+          <div>
+            <h5 class="mb-0">Unknown Author</h5>
+            <p class="text-muted mb-0"><%= new Date(blog.createdAt).toLocaleDateString() %></p>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Blog cover image -->
+      <% if (blog.coverImageURL) { %>
+        <img src="<%= blog.coverImageURL %>" class="img-fluid rounded" alt="cover image">
+      <% } %>
+
+      <!-- Blog body -->
+      <div class="mt-4 fs-5">
+        <%= blog.body %>
+      </div>
+    <% } else { %>
+      <h2>Blog not found</h2>
+    <% } %>
+  </div>
+
+  <!-- Comment Section -->
+  <div class="container mt-5">
+    <h3>Comments (<%= comments.length %>)</h3>
+
+    <% if (user) { %>
+      <div class="card my-4">
+        <div class="card-body">
+          <h5 class="card-title">Leave a Comment</h5>
+          <form action="/blog/comment/<%= blog._id %>" method="post">
+            <div class="mb-3">
+              <textarea class="form-control" name="content" rows="3" placeholder="Enter your comment" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    <% } else { %>
+      <p class="my-4"><a href="/user/signin">Sign in</a> to add a comment.</p>
+    <% } %>
+
+    <!-- Existing Comments -->
+    <div class="mt-4">
+      <% if (comments && comments.length > 0) { %>
+        <% comments.forEach(c => { %>
+          <div class="d-flex gap-3 mb-4">
+            <img src="<%= c.createdBy.profileImageURL || '/images/default.png' %>" width="50" height="50" alt="author image" class="rounded-circle">
+            <div>
+              <strong><%= c.createdBy.name || 'Anonymous' %>:</strong>
+              <p class="mb-0"><%= c.content %></p>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="text-muted">No comments yet. Be the first to comment!</p>
+      <% } %>
+    </div>
+  </div>
+
+  <%- include('./partials/scripts') %>
+</body>
+</html>

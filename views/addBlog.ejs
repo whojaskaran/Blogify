@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/head') %>
+  <title>Add New Blog</title>
+</head>
+<body>
+  <%- include('./partials/nav') %>
+
+  <div class="container mt-4">
+    <form action="/blog" method="post" enctype="multipart/form-data">
+      <div class="row">
+        <div class="col-md-8">
+
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control form-control-lg" id="title" name="title" required>
+          </div>
+
+
+          <div class="mb-3">
+            <label for="body" class="form-label">Body</label>
+            <textarea class="form-control" name="body" id="body" rows="10" required></textarea>
+          </div>
+        </div>
+        <div class="col-md-4">
+
+          <div class="mb-3">
+            <label for="coverImage" class="form-label">Cover Image</label>
+            <input type="file" class="form-control" id="coverImage" name="coverImage" onchange="previewImage(event)">
+            <img id="imagePreview" class="img-fluid rounded mt-3" style="display: none;" alt="Image Preview"/>
+          </div>
+
+
+          <div class="d-grid">
+            <button class="btn btn-primary btn-lg" type="submit">Publish</button>
+            <button class="btn btn-secondary btn-lg mt-2" type="button" data-bs-toggle="modal" data-bs-target="#geminiModal">Generate with AI</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <%- include('./partials/scripts') %>
+
+  <div class="modal fade" id="geminiModal" tabindex="-1" aria-labelledby="geminiModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="geminiModalLabel">Generate Blog with AI</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="geminiForm">
+            <div class="mb-3">
+              <label for="prompt" class="form-label">Enter a prompt for your blog post</label>
+              <textarea class="form-control" id="prompt" name="prompt" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Generate</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function previewImage(event) {
+      const reader = new FileReader();
+      reader.onload = function(){
+        const output = document.getElementById('imagePreview');
+        output.src = reader.result;
+        output.style.display = 'block';
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+
+    document.getElementById('geminiForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      console.log('Gemini form submitted');
+      const prompt = document.getElementById('prompt').value;
+      console.log('Prompt:', prompt);
+      try {
+        const response = await fetch('/blog/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt })
+        });
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+          console.error('Error generating blog:', await response.text());
+          return;
+        }
+        const data = await response.json();
+        console.log('Generated data:', data);
+        document.getElementById('title').value = data.title;
+        document.getElementById('body').value = data.body;
+        const modal = bootstrap.Modal.getInstance(document.getElementById('geminiModal'));
+        modal.hide();
+      } catch (error) {
+        console.error('Error generating blog:', error);
+      }
+    });
+  </script>
+</body>
+</html>

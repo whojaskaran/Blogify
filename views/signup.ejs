@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/head') %>
+  <title><%= (typeof title !== 'undefined' ? title : 'Sign up') %></title>
+</head>
+<body class="auth-page">
+  <%- include('./partials/nav') %>
+
+  <main class="auth-container">
+    <div class="auth-card" role="main" aria-labelledby="signup-heading">
+      <!-- Big heading -->
+      <h1 id="signup-heading" class="display-6 mb-1">Create account</h1>
+      <p class="text-muted mb-4">Join Blogify — set up your profile and start publishing.</p>
+
+      <% if (locals.error) { %>
+        <div class="alert alert-danger" role="alert"><%= locals.error %></div>
+      <% } %>
+
+      <form action="/user/signup" method="post" class="form-auth" novalidate>
+        <div class="row gx-2">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="fullName" class="form-label small">Full name</label>
+              <!-- name changed to fullName to match server schema -->
+              <input id="fullName" name="fullName" type="text" class="form-control form-control-lg" placeholder="Your full name" required aria-required="true" />
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="username" class="form-label small">Username</label>
+              <input id="username" name="username" type="text" class="form-control form-control-lg" placeholder="username" required aria-required="true" />
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label small">Email address</label>
+          <input id="email" name="email" type="email" class="form-control form-control-lg" placeholder="you@company.com" required aria-required="true" />
+          <div id="emailHelp" class="form-text small">We'll never share your email with anyone else.</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label small">Password</label>
+          <input id="password" name="password" type="password" class="form-control form-control-lg" placeholder="Choose a strong password" required aria-required="true" minlength="6" />
+          <div class="form-text small">Use at least 6 characters. Stronger passwords are safer.</div>
+        </div>
+
+        <div class="d-grid mb-3">
+          <button class="btn btn-primary btn-lg" type="submit">Create account</button>
+        </div>
+
+        <div class="text-center small">
+          Already have an account? <a href="/user/signin">Sign in</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <%- include('./partials/scripts') %>
+</body>
+</html>

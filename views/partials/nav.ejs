@@ -1,0 +1,72 @@
+<nav class="navbar navbar-expand-lg site-nav" data-bs-theme="dark" role="navigation">
+  <div class="container-fluid">
+    <!-- BRAND (left) -->
+    <a class="navbar-brand ms-3" href="/" aria-label="Blogify home">
+      <h1 class="m-0 fw-bold text-white">Blogify</h1>
+    </a>
+
+    <!-- TOGGLER -->
+    <button class="navbar-toggler me-3" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarMain" aria-controls="navbarMain"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- NAV ITEMS (right) -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarMain">
+      <ul class="navbar-nav align-items-lg-center gap-2 me-3">
+        <li class="nav-item"><a class="nav-link text-white" href="/"><span class="m-0">Home</span></a></li>
+
+        <% if (locals.user) { %>
+          <li class="nav-item">
+            <button class="nav-link text-white" id="theme-toggle" type="button">
+              <i class="ri-sun-line"></i>
+            </button>
+          </li>
+
+          <li class="nav-item"><a class="nav-link text-white" href="/blog/add-new"><span class="m-0">Add Blog</span></a></li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2" href="#"
+               id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="avatar">
+                <%= locals.user && locals.user.name ? locals.user.name.charAt(0).toUpperCase() : '' %>
+              </div>
+              <span class="small opacity-85"><%= locals.user && locals.user.name ? locals.user.name : 'Account' %></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="accountDropdown">
+              <li><a class="dropdown-item" href="/user/profile"><span class="m-0">Profile</span></a></li>
+              <li><a class="dropdown-item" href="/user/settings"><span class="m-0">Settings</span></a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="/user/logout"><span class="m-0">Logout</span></a></li>
+            </ul>
+          </li>
+
+        <% } else { %>
+          <li class="nav-item"><a class="nav-link text-white" href="/user/signup"><span class="m-0">Create Account</span></a></li>
+          <li class="nav-item"><a class="nav-link btn btn-sm btn-outline-light ms-2" href="/user/signin"><span class="m-0">Sign in</span></a></li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const themeToggle = document.getElementById('theme-toggle');
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-bs-theme', currentTheme);
+  if (currentTheme === 'dark') {
+    themeToggle.querySelector('i').classList.replace('ri-sun-line', 'ri-moon-line');
+  }
+
+  themeToggle.addEventListener('click', () => {
+    const newTheme = document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-bs-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    if (newTheme === 'dark') {
+      themeToggle.querySelector('i').classList.replace('ri-sun-line', 'ri-moon-line');
+    } else {
+      themeToggle.querySelector('i').classList.replace('ri-moon-line', 'ri-sun-line');
+    }
+  });
+</script>
